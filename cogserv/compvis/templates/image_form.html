@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Image Upload</title>
+        {% load static %}
+        <link rel = "stylesheet" href="{% static 'styles.css' %}">
+    </head>
+    <body>
+        <div class="page-header">
+            <h1>OCRify</h1>
+        </div>
+        <div class = "main-div">
+            <div class="left-title"><h2>Input Image</h2></div>
+            <div class="right-title"><h2>Text Output</h2></div>
+            <div class="swap-svg">
+                <svg width="55" height="37" viewBox="0 0 55 37" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M0.632436 9.89424C0.205341 10.3213 -0.00543574 10.8828 0.000106497 11.4426C-0.00543571 12.0023 0.205341 12.5638 0.632436 12.9909L9.89424 22.2527C10.7375 23.096 12.1047 23.096 12.9479 22.2527C13.7912 21.4095 13.7912 20.0423 12.9479 19.1991L7.34151 13.5927H34.5179C35.7105 13.5927 36.6772 12.6259 36.6772 11.4334C36.6772 10.2409 35.7105 9.27412 34.5179 9.27412H7.3599L12.9479 3.68611C13.7912 2.84286 13.7912 1.47568 12.9479 0.632436C12.1047 -0.210812 10.7375 -0.210812 9.89424 0.632436L0.632436 9.89424ZM54.3676 23.7029C54.7947 24.13 55.0055 24.6915 55 25.2512C55.0055 25.811 54.7947 26.3725 54.3676 26.7996L45.1058 36.0614C44.2626 36.9046 42.8954 36.9046 42.0522 36.0614C41.2089 35.2181 41.2089 33.851 42.0522 33.0077L47.6586 27.4013H20.4826C19.2901 27.4013 18.3233 26.4346 18.3233 25.242C18.3233 24.0495 19.2901 23.0828 20.4826 23.0828H47.6402L42.0522 17.4948C41.2089 16.6515 41.2089 15.2843 42.0522 14.4411C42.8954 13.5978 44.2626 13.5978 45.1058 14.4411L54.3676 23.7029Z" fill="#949494"/>
+                </svg>                    
+            </div>
+            <div class="title-divider"></div>
+            <div class="left-div">
+                <div class="left-div-contents">
+                    <form method="post" action="ocr" enctype="multipart/form-data" onchange=this.submit();>   
+                        {% csrf_token %}
+                        <div class="camera-box">
+                            <div class="camera-svg">
+                                <svg width="131" height="106" viewBox="0 0 131 106" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M86.553 61.7724C86.553 73.3335 77.1482 82.7383 65.5872 82.7383C54.0261 82.7383 44.6249 73.3335 44.6249 61.7724C44.6249 50.2113 54.0261 40.8065 65.5872 40.8065C77.1482 40.8065 86.553 50.2149 86.553 61.7724ZM130.587 32.0018V91.5501C130.587 99.4887 124.151 105.925 116.212 105.925H14.9621C7.02355 105.925 0.587158 99.4887 0.587158 91.5501V32.0018C0.587158 24.0633 7.02355 17.6269 14.9621 17.6269H32.6433V12.6531C32.6433 5.70644 38.2711 0.0750427 45.2214 0.0750427H85.9529C92.9032 0.0750427 98.531 5.70644 98.531 12.6531V17.6233H116.212C124.151 17.6269 130.587 24.0633 130.587 32.0018ZM97.3343 61.7724C97.3343 44.2673 83.0923 30.0253 65.5872 30.0253C48.0856 30.0253 33.8436 44.2673 33.8436 61.7724C33.8436 79.2775 48.0856 93.5195 65.5872 93.5195C83.0923 93.5195 97.3343 79.2775 97.3343 61.7724Z" fill="#A7A7A7"/>
+                                </svg>                            
+                            </div>
+                        </div>
+                        <div class="upload-message">Input image to begin</div>
+                        <div class="upload-sub-message">You can simply put your image in here to transform it into texts.</div>
+                        <input type="file" accept="image/*" id="upload-actual-btn" name="input_img" hidden/>
+                        <label for="upload-actual-btn" class="upload-button">
+                            <div class="upload-text">Upload Image</div>
+                        </label>
+                    </form>
+                </div>
+            </div>
+            <div class = "right-div">
+                <form method="post" action="translate" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="left-text">
+                        Current Language
+                    </div>
+                    <select class="dropdown-box source-dropdown" name="source_language">
+                        {% for language in available_languages %}
+                        <option class="dropdown-value" value="{{language.id}}" {% if language.id == selected_source %} selected="selected" {% endif %}>
+                            {{ language.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <div class="right-text">
+                        Target Language
+                    </div>
+                    <select class="dropdown-box target-dropdown" name="target_language">
+                        {% for language in available_languages %}
+                        <option class="dropdown-value" value="{{language.id}}" {% if language.id == selected_target %} selected="selected" {% endif %}>
+                            {{ language.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <button class="translate-btn" type="submit">
+                        <div class="translate-text">
+                            Translate
+                        </div>
+                    </button>
+                    <div class = "result-textbox">
+                        <p>{{ result|linebreaksbr|default_if_none:"" }}</p>
+                    </div>
+                    <input name="text" value="{{ result|default_if_none:'' }}" style="display:none;"/>
+                </form>
+            </div>
+        </div>
+        <div class="extra-buttons">
+            <form action="tts" method="post" target="dummyframe">
+                {% csrf_token %}
+                <button class="tts-button" type="submit">
+                    <svg width="60" height="48" viewBox="0 0 60 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M47.3402 1.12455C48.7653 0.154074 50.6969 0.336011 51.7949 1.66538C56.8771 7.81824 60 15.6994 60 24.2901C60 32.7891 57.0238 40.593 52.0568 46.7165C51.0354 47.9756 49.2141 48.1486 47.8843 47.2212L47.675 47.0753C46.3513 46.1522 46.1982 44.256 47.2244 43.0105C51.4009 37.9417 53.9063 31.4648 53.9063 24.4072C53.9063 17.1622 51.266 10.529 46.8879 5.4029C45.7796 4.10516 45.9295 2.08513 47.3402 1.12455ZM10.9226 16.0868L26.1602 3.45079C27.6877 2.18403 30 3.27043 30 5.25491V18.4306V30.1493V43.4653C30 45.4458 27.6957 46.5335 26.1666 45.2747L10.6409 32.4931H2.34375C1.04933 32.4931 0 31.4438 0 30.1493V18.4306C0 17.1362 1.04933 16.0868 2.34375 16.0868H10.9226ZM42.3278 11.0709C41.3994 9.88992 39.7516 9.6339 38.4108 10.3113C37.071 10.9883 36.7757 12.7774 37.6273 14.0135C39.6166 16.9013 40.7813 20.4011 40.7813 24.1729C40.7813 27.8121 39.697 31.1981 37.834 34.0255C37.0273 35.2497 37.2896 36.9721 38.5639 37.6971C40.1937 38.6244 42.2848 38.2708 43.282 36.6829C45.5585 33.058 46.875 28.7692 46.875 24.1729C46.875 19.4793 45.4086 14.9899 42.3278 11.0709Z" fill="url(#paint0_linear_12_79)"/>
+                        <defs>
+                        <linearGradient id="paint0_linear_12_79" x1="-5.5" y1="24" x2="67" y2="24" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#585BEA"/>
+                        <stop offset="1" stop-color="#3C9EEC"/>
+                        </linearGradient>
+                        </defs>
+                    </svg>                    
+                </button>
+                <input name="tts" value="{{result}}" style="display:none;"/>
+            </form>
+        </div>
+        <iframe name="dummyframe" id="dummyframe" style="display:none;"></iframe>
+    </body>
+</html>
